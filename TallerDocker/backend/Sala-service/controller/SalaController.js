@@ -1,4 +1,4 @@
-const Sala = require("./Sala");
+const Sala = require("../models/Sala");
 
 exports.obtenerTodas = async (req, res) => {
   try {

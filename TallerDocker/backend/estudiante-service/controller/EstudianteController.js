@@ -1,4 +1,4 @@
-const Estudiante = require("../estudiante-service/Estudiante");
+const Estudiante = require("../models/Estudiante");
 
 // GET /api/estudiantes
 exports.obtenerTodos = async (req, res) => {

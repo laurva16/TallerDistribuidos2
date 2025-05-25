@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const EstudianteRoute = require("./EstudianteRoute");
+const EstudianteRoute = require("./routes/EstudianteRoute");
 
 dotenv.config();
 
@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 // Rutas
-app.use("/api/estudiantes", EstudianteRoute);
+app.use("/estudiantes", EstudianteRoute);
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI)  // Asegúrate que tu URI esté en .env bajo MONGO_URI

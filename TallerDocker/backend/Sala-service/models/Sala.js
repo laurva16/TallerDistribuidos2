@@ -6,6 +6,4 @@ const SalaSchema = new mongoose.Schema({
   capacidad: { type: Number, required: true }
 }, { versionKey: false });
 
-// Ya no se usa pre-save ni contador
-
 module.exports = mongoose.model("Sala", SalaSchema);

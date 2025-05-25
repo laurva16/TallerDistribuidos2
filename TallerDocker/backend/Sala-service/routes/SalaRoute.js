@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const ctrl = require("../estudiante-service/EstudianteController");
+const ctrl = require("../controller/SalaController");
 
-router.get("/", ctrl.obtenerTodos);
+router.get("/", ctrl.obtenerTodas);
 router.post("/", ctrl.crear);
 router.get("/:id", ctrl.obtenerPorId);
 router.put("/:id", ctrl.actualizar);

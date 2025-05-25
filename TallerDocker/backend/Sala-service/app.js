@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const SalaRoute = require("./SalaRoute");
+const SalaRoute = require("./routes/SalaRoute");
 
 dotenv.config();
 
@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 // Rutas
-app.use("/api/Salas", SalaRoute);
+app.use("/Salas", SalaRoute);
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI)
