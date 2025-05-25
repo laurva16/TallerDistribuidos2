@@ -1,8 +1,8 @@
-const Prestamo = require("./Prestamo");
+const Prestamo = require("../models/Prestamo");
 const axios = require("axios");
 
-const ESTUDIANTE_SERVICE_URL = "http://estudiante-service/api/estudiantes";
-const SALA_SERVICE_URL = "http://sala-service/api/salas";
+const ESTUDIANTE_SERVICE_URL = "http://localhost:3001/estudiantes";
+const SALA_SERVICE_URL = "http://localhost:3002/salas";
 
 exports.obtenerTodos = async (req, res) => {
   try {
@@ -83,12 +83,6 @@ exports.crear = async (req, res) => {
   const { estudianteId, salaId, fechaInicio, fechaFin } = req.body;
 
   try {
-    // Validar existencia Estudiante
-    await axios.get(`${ESTUDIANTE_SERVICE_URL}/${estudianteId}`);
-
-    // Validar existencia Sala
-    await axios.get(`${SALA_SERVICE_URL}/${salaId}`);
-
     const nuevo = new Prestamo({ estudianteId, salaId, fechaInicio, fechaFin });
     await nuevo.save();
 
@@ -135,5 +129,97 @@ exports.eliminar = async (req, res) => {
   } catch (error) {
     console.error("Error al eliminar préstamo:", error);
     res.status(500).json({ mensaje: "Error al eliminar préstamo", error: error.message });
+  }
+};
+
+exports.frecuenciaSala = async (req, res) => {
+  try {
+    const resultado = await Prestamo.aggregate([
+      {
+        $group: {
+          _id: '$salaId',
+          cantidad: { $sum: 1 }
+        }
+      },
+      { $sort: { cantidad: -1 } },
+      { $limit: 1 }
+    ]);
+
+    if (resultado.length === 0) {
+      return res.status(404).json({ mensaje: 'No hay préstamos registrados' });
+    }
+
+    res.json({
+      salaId: resultado[0]._id,
+      cantidad: resultado[0].cantidad
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al procesar la solicitud' });
+  }
+}
+
+exports.frecuenciaEstudiante = async (req, res) => {
+  try {
+    const resultado = await Prestamo.aggregate([
+      {
+        $group: {
+          _id: '$estudianteId',
+          cantidad: { $sum: 1 }
+        }
+      },
+      { $sort: { cantidad: -1 } },
+      { $limit: 1 }
+    ]);
+
+    if (resultado.length === 0) {
+      return res.status(404).json({ mensaje: 'No hay préstamos registrados' });
+    }
+
+    res.json({
+      estudianteId: resultado[0]._id,
+      cantidad: resultado[0].cantidad
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al procesar la solicitud' });
+  }
+}
+
+
+exports.reporteSemanal = async (req, res) => {
+  try {
+    const resultado = await Prestamo.aggregate([
+      {
+        $group: {
+          _id: {
+            $isoWeek: "$createdAt"  // Agrupa por número de semana del año
+          },
+          total: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+    res.json(resultado);
+  } catch (error) {
+    res.status(500).json({ error: "Error al generar reporte semanal" });
+  }
+};
+
+exports.reporteMensual = async (req, res) => {
+  try {
+    const resultado = await Prestamo.aggregate([
+      {
+        $group: {
+          _id: {
+            año: { $year: "$createdAt" },
+            mes: { $month: "$createdAt" }
+          },
+          total: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.año": 1, "_id.mes": 1 } }
+    ]);
+    res.json(resultado);
+  } catch (error) {
+    res.status(500).json({ error: "Error al generar reporte mensual" });
   }
 };

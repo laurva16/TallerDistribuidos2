@@ -5,6 +5,6 @@ const PrestamoSchema = new mongoose.Schema({
   salaId: { type: String, required: true },        // Igual aquí
   fechaInicio: { type: Date, required: true },
   fechaFin: { type: Date, required: true }
-}, { versionKey: false });
+}, { timestamps: true });
 
 module.exports = mongoose.model("Prestamo", PrestamoSchema);

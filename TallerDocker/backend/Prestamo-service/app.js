@@ -9,21 +9,22 @@ const app = express();
 app.use(express.json());
 
 // Registrar modelos para que Mongoose los conozca
-require("./Prestamo");                      // Modelo Prestamo local
+require("./models/Prestamo");                      // Modelo Prestamo local
 
 // Importar rutas
-const PrestamoRoute = require("./PrestamoRoute");
+const PrestamoRoute = require("./routes/PrestamoRoute");
 
 // Conectar a MongoDB
-const uri = process.env.MONGO_URI || "mongodb://localhost:27017/prestamo-db";
+const uri = process.env.MONGO_URI;
 
 mongoose.connect(uri)
   .then(() => console.log("Prestamo DB conectada"))
   .catch((err) => console.error("Error conectando a DB:", err));
 
 // Usar rutas
-app.use("/api/prestamos", PrestamoRoute);
+app.use("/prestamos", PrestamoRoute);
 
 // Puerto y servidor
 const PORT = process.env.PORT || 3003;
+
 app.listen(PORT, () => console.log(`Prestamo-service escuchando en puerto ${PORT}`));
