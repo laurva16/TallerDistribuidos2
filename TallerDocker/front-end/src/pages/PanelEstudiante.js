@@ -1,7 +1,9 @@
 // src/pages/PanelEstudiante.js
-import React from "react";
 import { Button, Container, Card } from "react-bootstrap";
 import ModalPrestamo from "../components/ModalPrestamo";
+import React, { useState, useEffect } from "react";
+
+
 
 function PanelEstudiante() {
   const estudiante = JSON.parse(localStorage.getItem("estudiante"));
