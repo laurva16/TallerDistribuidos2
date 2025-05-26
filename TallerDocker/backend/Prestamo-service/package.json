@@ -1,9 +1,10 @@
 {
-  "name": "prestamo-service",
+  "name": "sala-service",
   "version": "1.0.0",
-  "description": "",
-  "main": "Prestamo.js",
+  "description": "Servicio para manejo de salas",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.9.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongoose": "^8.15.0"

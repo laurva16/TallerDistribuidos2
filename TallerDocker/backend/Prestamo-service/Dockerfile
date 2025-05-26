@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3003
 
 # Comando para iniciar el servicio
-CMD ["node", "Prestamo.js"]
+CMD ["node", "app.js"]

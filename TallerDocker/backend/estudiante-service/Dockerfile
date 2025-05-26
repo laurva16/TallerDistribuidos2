@@ -14,4 +14,4 @@ COPY . .
 EXPOSE 3001
 
 # Comando para correr la app
-CMD ["node", "Estudiante.js"]
+CMD ["node", "app.js"]

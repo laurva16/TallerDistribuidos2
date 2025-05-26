@@ -1,19 +1,20 @@
-# Base image
+# Usa una imagen base oficial de Node.js
 FROM node:18
 
-# Set working directory
+# Crea y establece el directorio de trabajo
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copia los archivos de configuración
 COPY package*.json ./
+
+# Instala las dependencias
 RUN npm install
 
-# Copy the rest of the application
+# Copia el resto de los archivos del proyecto
 COPY . .
 
-# Expose the port
+# Expone el puerto que usa el servicio
 EXPOSE 3002
 
-# Start the service
-CMD ["node", "Sala.js"]
-
+# Comando para iniciar el servicio
+CMD ["node", "app.js"]

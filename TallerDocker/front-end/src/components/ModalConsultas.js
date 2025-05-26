@@ -14,9 +14,11 @@ function ModalConsultas({ show, handleClose }) {
   const BASE_URL = "http://localhost:3003";
 
   const consultarFrecuenciaSala = async () => {
-    setLoading(true); setError(""); setFrecuenciaSala(null);
+    setLoading(true);
+    setError("");
+    setFrecuenciaSala(null);
     try {
-      const res = await axios.get(`${BASE_URL}/prestamos/frecuencia-sala`);
+      const res = await axios.get(`${BASE_URL}/prestamos/frecuencia/sala`);
       setFrecuenciaSala(res.data);
     } catch (e) {
       setError("No se pudo obtener la frecuencia de salas.");
@@ -25,9 +27,11 @@ function ModalConsultas({ show, handleClose }) {
   };
 
   const consultarFrecuenciaEstudiante = async () => {
-    setLoading(true); setError(""); setFrecuenciaEstudiante(null);
+    setLoading(true);
+    setError("");
+    setFrecuenciaEstudiante(null);
     try {
-      const res = await axios.get(`${BASE_URL}/prestamos/frecuencia-estudiante`);
+      const res = await axios.get(`${BASE_URL}/prestamos/frecuencia/estudiante`);
       setFrecuenciaEstudiante(res.data);
     } catch (e) {
       setError("No se pudo obtener la frecuencia de estudiantes.");
@@ -36,9 +40,11 @@ function ModalConsultas({ show, handleClose }) {
   };
 
   const consultarReporteSemanal = async () => {
-    setLoading(true); setError(""); setReporteSemanal(null);
+    setLoading(true);
+    setError("");
+    setReporteSemanal(null);
     try {
-      const res = await axios.get(`${BASE_URL}/prestamos/reporte-semanal`);
+      const res = await axios.get(`${BASE_URL}/prestamos/reporte/semanal`);
       setReporteSemanal(res.data);
     } catch (e) {
       setError("No se pudo obtener el reporte semanal.");
@@ -47,9 +53,11 @@ function ModalConsultas({ show, handleClose }) {
   };
 
   const consultarReporteMensual = async () => {
-    setLoading(true); setError(""); setReporteMensual(null);
+    setLoading(true);
+    setError("");
+    setReporteMensual(null);
     try {
-      const res = await axios.get(`${BASE_URL}/prestamos/reporte-mensual`);
+      const res = await axios.get(`${BASE_URL}/prestamos/reporte/mensual`);
       setReporteMensual(res.data);
     } catch (e) {
       setError("No se pudo obtener el reporte mensual.");
@@ -58,7 +66,9 @@ function ModalConsultas({ show, handleClose }) {
   };
 
   const consultarPrestamos = async () => {
-    setLoading(true); setError(""); setPrestamos(null);
+    setLoading(true);
+    setError("");
+    setPrestamos(null);
     try {
       const res = await axios.get(`${BASE_URL}/prestamos`);
       setPrestamos(res.data);

@@ -14,9 +14,11 @@ exports.obtenerTodos = async (req, res) => {
       try {
         const resEst = await axios.get(`${ESTUDIANTE_SERVICE_URL}/${p.estudianteId}`);
         estudiante = resEst.data;
-      } catch {
+      } catch (e) {
+        console.error("Error al obtener estudiante:", e.message);
         estudiante = { error: "Estudiante no encontrado" };
       }
+      
 
       try {
         const resSala = await axios.get(`${SALA_SERVICE_URL}/${p.salaId}`);
@@ -44,7 +46,14 @@ exports.obtenerTodos = async (req, res) => {
 
 exports.obtenerPorId = async (req, res) => {
   try {
-    const p = await Prestamo.findById(req.params.id);
+    const id = req.params.id;
+
+    // Validar si el ID es un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ mensaje: "ID de préstamo inválido" });
+    }
+
+    const p = await Prestamo.findById(id);
     if (!p) return res.status(404).json({ mensaje: "Préstamo no encontrado" });
 
     let estudiante = null;
@@ -53,9 +62,11 @@ exports.obtenerPorId = async (req, res) => {
     try {
       const resEst = await axios.get(`${ESTUDIANTE_SERVICE_URL}/${p.estudianteId}`);
       estudiante = resEst.data;
-    } catch {
+    } catch (e) {
+      console.error("Error al obtener estudiante:", e.message);
       estudiante = { error: "Estudiante no encontrado" };
     }
+    
 
     try {
       const resSala = await axios.get(`${SALA_SERVICE_URL}/${p.salaId}`);
@@ -77,26 +88,28 @@ exports.obtenerPorId = async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener préstamo", error: error.message });
   }
 };
-
 exports.crear = async (req, res) => {
   const { estudianteId, salaId, fechaInicio, fechaFin } = req.body;
 
   try {
+    // 1. Verificar si la sala ya está ocupada en ese horario
+    const prestamosSolapados = await Prestamo.find({
+      salaId,
+      $or: [
+        {
+          fechaInicio: { $lt: fechaFin },
+          fechaFin: { $gt: fechaInicio }
+        }
+      ]
+    });
+
+    if (prestamosSolapados.length > 0) {
+      return res.status(400).json({ mensaje: "La sala ya está ocupada en ese horario" });
+    }
+
+    // 2. Crear el nuevo préstamo
     const nuevo = new Prestamo({ estudianteId, salaId, fechaInicio, fechaFin });
     await nuevo.save();
-    const prestamosSolapados = await Prestamo.find({
-  salaId,
-  $or: [
-    {
-      fechaInicio: { $lt: fechaFin },
-      fechaFin: { $gt: fechaInicio }
-    }
-  ]
-});
-
-if (prestamosSolapados.length > 0) {
-  return res.status(400).json({ mensaje: "La sala ya está ocupada en ese horario" });
-}
 
     res.status(201).json({ mensaje: "Préstamo creado", prestamo: nuevo });
   } catch (error) {
@@ -107,6 +120,7 @@ if (prestamosSolapados.length > 0) {
     res.status(400).json({ mensaje: "Error al crear préstamo", error: error.message });
   }
 };
+
 
 exports.actualizar = async (req, res) => {
   const { estudianteId, salaId } = req.body;
@@ -151,16 +165,23 @@ exports.frecuenciaSala = async (req, res) => {
       { $sort: { cantidad: -1 } },
       { $limit: 1 }
     ]);
+
     if (resultado.length === 0) {
       return res.status(404).json({ mensaje: "No hay préstamos registrados" });
     }
+
+    console.log("Sala con más frecuencia:", resultado[0]);
+
     let sala = null;
     try {
       const salaRes = await axios.get(`${SALA_SERVICE_URL}/${resultado[0]._id}`);
       sala = salaRes.data;
-    } catch {
+      console.log("Sala obtenida:", sala);
+    } catch (e) {
+      console.error("Error al obtener sala:", e.message);
       sala = { nombre: "Sala no encontrada", ubicacion: "", capacidad: "" };
     }
+
     res.json({
       salaId: resultado[0]._id,
       salaNombre: sala.nombre,
@@ -169,9 +190,11 @@ exports.frecuenciaSala = async (req, res) => {
       cantidad: resultado[0].cantidad
     });
   } catch (err) {
+    console.error("Error en frecuenciaSala:", err);
     res.status(500).json({ error: "Error al procesar la solicitud" });
   }
 };
+
 
 // Frecuencia de estudiante (más activo)
 exports.frecuenciaEstudiante = async (req, res) => {
@@ -186,11 +209,13 @@ exports.frecuenciaEstudiante = async (req, res) => {
     }
     let estudiante = null;
     try {
-      const estRes = await axios.get(`${ESTUDIANTE_SERVICE_URL}/${resultado[0]._id}`);
-      estudiante = estRes.data;
-    } catch {
-      estudiante = { nombre: "Estudiante no encontrado", correo: "", programa: "" };
+      const resEst = await axios.get(`${ESTUDIANTE_SERVICE_URL}/${p.estudianteId}`);
+      estudiante = resEst.data;
+    } catch (e) {
+      console.error("Error al obtener estudiante:", e.message);
+      estudiante = { error: "Estudiante no encontrado" };
     }
+    
     res.json({
       estudianteId: resultado[0]._id,
       estudianteNombre: estudiante.nombre,

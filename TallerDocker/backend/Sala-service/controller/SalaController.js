@@ -50,3 +50,25 @@ exports.eliminar = async (req, res) => {
     res.status(500).json({ mensaje: "Error al eliminar sala", error });
   }
 };
+
+exports.obtenerDisponibles = async (req, res) => {
+  const { fechaInicio, fechaFin } = req.query;
+
+  try {
+    // Lógica para filtrar salas disponibles
+    // Esto es solo un ejemplo: debes personalizarlo según tu modelo de Prestamos
+    const prestamos = await Prestamo.find({
+      $or: [
+        { fechaInicio: { $lt: fechaFin }, fechaFin: { $gt: fechaInicio } }
+      ]
+    });
+
+    const ocupadas = prestamos.map(p => p.salaId.toString());
+    const disponibles = await Sala.find({ _id: { $nin: ocupadas } });
+
+    res.json(disponibles);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al buscar salas disponibles", error });
+  }
+};
+

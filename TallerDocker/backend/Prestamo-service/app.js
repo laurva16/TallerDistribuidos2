@@ -1,22 +1,22 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const cors = require("cors"); // <--- Agrega esta línea
 
-// Carga variables de entorno
 dotenv.config();
 
 const app = express();
+app.use(cors({ origin: "http://localhost" })); // <--- Agrega esta línea justo después de crear `app`
 app.use(express.json());
 
-// Registrar modelos para que Mongoose los conozca
-require("./models/Prestamo");                      // Modelo Prestamo local
+// Registrar modelos
+require("./models/Prestamo");
 
-// Importar rutas
+// Rutas
 const PrestamoRoute = require("./routes/PrestamoRoute");
 
-// Conectar a MongoDB
+// Conexión a MongoDB
 const uri = process.env.MONGO_URI;
-
 mongoose.connect(uri)
   .then(() => console.log("Prestamo DB conectada"))
   .catch((err) => console.error("Error conectando a DB:", err));
@@ -24,7 +24,6 @@ mongoose.connect(uri)
 // Usar rutas
 app.use("/prestamos", PrestamoRoute);
 
-// Puerto y servidor
+// Puerto
 const PORT = process.env.PORT || 3003;
-
 app.listen(PORT, () => console.log(`Prestamo-service escuchando en puerto ${PORT}`));
