@@ -13,7 +13,7 @@ function LoginEstudiante() {
     setError("");
 
     // Si el login es del profesor
-if (codigo === "AdminProfesor" && correo === "Admin12345") {
+if (codigo === "AdminProfesor" && correo === "Admin@12345") {
   localStorage.setItem("isAdmin", "true");
   navigate("/panel-profesor");
   return;
