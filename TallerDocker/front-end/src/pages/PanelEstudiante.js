@@ -1,10 +1,11 @@
 // src/pages/PanelEstudiante.js
 import React from "react";
 import { Button, Container, Card } from "react-bootstrap";
+import ModalPrestamo from "../components/ModalPrestamo";
 
 function PanelEstudiante() {
   const estudiante = JSON.parse(localStorage.getItem("estudiante"));
-
+const [showModal, setShowModal] = useState(false);
   const handlePedirPrestamo = () => {
     // Aquí puedes redirigir o abrir un modal (depende de tu lógica)
     alert("Función para pedir un préstamo aún no implementada.");
@@ -19,9 +20,10 @@ function PanelEstudiante() {
             <strong>Programa:</strong> {estudiante?.programa} <br />
             <strong>Correo:</strong> {estudiante?.correo}
           </Card.Text>
-          <Button variant="primary" onClick={handlePedirPrestamo}>
-            Pedir un préstamo
-          </Button>
+          <Button variant="primary" onClick={() => setShowModal(true)}>
+                Pedir un préstamo
+                </Button>
+            <ModalPrestamo show={showModal} handleClose={() => setShowModal(false)} />
         </Card.Body>
       </Card>
     </Container>

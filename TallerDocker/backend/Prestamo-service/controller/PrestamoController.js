@@ -85,6 +85,19 @@ exports.crear = async (req, res) => {
   try {
     const nuevo = new Prestamo({ estudianteId, salaId, fechaInicio, fechaFin });
     await nuevo.save();
+    const prestamosSolapados = await Prestamo.find({
+  salaId,
+  $or: [
+    {
+      fechaInicio: { $lt: fechaFin },
+      fechaFin: { $gt: fechaInicio }
+    }
+  ]
+});
+
+if (prestamosSolapados.length > 0) {
+  return res.status(400).json({ mensaje: "La sala ya está ocupada en ese horario" });
+}
 
     res.status(201).json({ mensaje: "Préstamo creado", prestamo: nuevo });
   } catch (error) {
