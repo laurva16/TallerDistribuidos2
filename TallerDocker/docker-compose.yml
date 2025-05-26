@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  estudiante-service:
+    build: ./backend/estudiante-service
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/estudiante-service/.env
+    depends_on:
+      - mongo
+
+  sala-service:
+    build: ./backend/Sala-service
+    ports:
+      - "3011:3001"
+    env_file:
+      - ./backend/Sala-service/.env
+    depends_on:
+      - mongo
+
+  prestamo-service:
+    build: ./backend/Prestamo-service
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./backend/Prestamo-service/.env
+    depends_on:
+      - mongo
+
+  reportes-service:
+    build: ./backend/reportes-service
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./backend/reportes-service/.env
+    depends_on:
+      - mongo
+
+  front-end:
+    build: ./front-end
+    ports:
+      - "80:80"
+    depends_on:
+      - estudiante-service
+      - sala-service
+      - prestamo-service
+      - reportes-service
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

@@ -14,7 +14,9 @@ function Home() {
           <h5>Prestamo de Aulas a un solo click!</h5>
           <p>Selecciona una opción para ingresar al sistema:</p>
           <div className="button-group">
-            <button className="btn btn-primary">
+            <button className="btn btn-primary"
+            onClick={() => navigate('/LoginEstudiante')}
+            >
               <i className="fas fa-user-graduate"></i>
               Entrar como Estudiante
             </button>
